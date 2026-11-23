@@ -1,0 +1,84 @@
+<ion-content class="home-content" [fullscreen]="true">
+  <div class="hero-header">
+    <div class="brand-row">
+      <div class="logo-box">
+        <ion-icon name="heart-outline"></ion-icon>
+      </div>
+      <div class="brand-name">
+        <strong>Conecta Saúde</strong>
+        <span>PE</span>
+      </div>
+    </div>
+
+    <p class="greeting">Olá, {{ usuarioNome }}</p>
+    <h1>Como podemos cuidar de você?</h1>
+  </div>
+
+  <div class="main-body">
+
+    <h2 class="section-title">Acesso rápido</h2>
+
+    <div class="quick-card primary" routerLink="/agendar">
+      <div class="icon-wrapper">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </div>
+      <div class="card-text">
+        <h3>Agendar consulta ou exame</h3>
+        <p>Encontre o cuidado que precisa</p>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+    </div>
+
+    <div class="quick-card secondary" routerLink="/consultas">
+      <div class="icon-wrapper">
+        <ion-icon name="clipboard-outline"></ion-icon>
+      </div>
+      <div class="card-text">
+        <h3>Minhas consultas</h3>
+        <p>Acompanhe seus agendamentos</p>
+      </div>
+      <ion-icon name="chevron-forward-outline" class="arrow"></ion-icon>
+    </div>
+
+    <div class="section-header-row">
+      <h2 class="section-title">Próximo agendamento</h2>
+      <button class="btn-see-all" routerLink="/agendamento">
+        Ver todos
+      </button>
+    </div>
+
+    <div class="next-appt-card">
+      <div class="card-top">
+        <div class="type-label">
+          <ion-icon name="medkit-outline"></ion-icon>
+          <span>{{ proximoAgendamento.tipo }}</span>
+        </div>
+        <span class="status-badge">
+          <span class="dot"></span> {{ proximoAgendamento.status }}
+        </span>
+      </div>
+
+      <h3>{{ proximoAgendamento.hospital }}</h3>
+      <p class="doctor">{{ proximoAgendamento.profissional }}</p>
+      <p class="specialty">{{ proximoAgendamento.especialidade }}</p>
+
+      <div class="datetime-box">
+        <div class="dt-item">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>{{ proximoAgendamento.data }}</span>
+        </div>
+        <div class="dt-item">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ proximoAgendamento.horario }}</span>
+        </div>
+      </div>
+
+      <div class="card-footer-link">
+        <button class="btn-details-link" routerLink="/consultas">
+          Ver detalhes <ion-icon name="chevron-forward-outline"></ion-icon>
+        </button>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

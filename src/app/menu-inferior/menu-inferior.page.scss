@@ -1,0 +1,23 @@
+ion-tab-bar {
+  --background: #ffffff;
+  --border: 1px solid #e2e8f0;
+  height: 60px;
+  padding-bottom: env(safe-area-inset-bottom);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
+}
+
+ion-tab-button {
+  --background: #ffffff;
+  --color: #64748b;        
+  --color-selected: #004aad; 
+  font-weight: 500;
+
+  ion-icon {
+    font-size: 22px;
+    margin-bottom: 2px;
+  }
+
+  ion-label {
+    font-size: 12px;
+  }
+}
