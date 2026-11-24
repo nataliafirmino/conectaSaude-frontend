@@ -1,0 +1,66 @@
+<ion-content class="login-content" [fullscreen]="true">
+  <div class="header-section">
+    <div class="logo-container">
+      <div class="app-icon">
+        <img class="logo" src="assets/logo.svg" alt="Conecta Saúde Logo">
+      </div>
+      <div class="app-title-group">
+        <h1>Conecta Saúde</h1>
+        <span class="badge-pe">PE</span>
+      </div>
+    </div>
+
+    <h2>Cuidado mais perto de você</h2>
+  </div>
+
+  <div class="form-card">
+    <div class="form-header">
+      <h3>Entre na sua conta</h3>
+      <p>Use seus dados para continuar</p>
+    </div>
+
+    <div class="input-group">
+      <label>CPF ou e-mail</label>
+      <ion-item lines="none" class="custom-input">
+        <ion-input [(ngModel)]="cpfOuEmail" placeholder="Digite seu CPF ou e-mail"></ion-input>
+      </ion-item>
+    </div>
+
+    <div class="input-group">
+      <label>Senha</label>
+      <ion-item lines="none" class="custom-input">
+        <ion-input [(ngModel)]="senha" [type]="mostrarSenha ? 'text' : 'password'" placeholder="Digite sua senha">
+        </ion-input>
+        <ion-icon slot="end" [name]="mostrarSenha ? 'eye-off-outline' : 'eye-outline'"
+          (click)="visibilidadeSenha()" class="password-toggle-icon">
+        </ion-icon>
+      </ion-item>
+    </div>
+
+    <div class="forgot-password">
+      <a href="#" (click)="$event.preventDefault()">Esqueci minha senha</a>
+    </div>
+
+    <ion-button expand="block" class="login-button" (click)="entrar()">
+      Entrar
+      <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+    </ion-button>
+
+    <div class="divider">
+      <span>ou</span>
+    </div>
+
+    <div class="register-link">
+      Ainda não tem cadastro? <a href="#" (click)="$event.preventDefault(); irParaCadastro()">Criar conta</a>
+    </div>
+
+    <div class="security-badge">
+      <ion-icon name="shield-checkmark-outline"></ion-icon>
+      <span>Seus dados estão protegidos e seguros.</span>
+    </div>
+
+    <div class="admin-link">
+      <a href="#" (click)="$event.preventDefault()">Acessar área administrativa</a>
+    </div>
+  </div>
+</ion-content>
