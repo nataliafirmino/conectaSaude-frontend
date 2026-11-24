@@ -1,0 +1,203 @@
+<ion-content class="register-content" [fullscreen]="true">
+  <div class="top-header">
+    <ion-button fill="clear" class="back-button" (click)="etapaAnterior()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </ion-button>
+
+    <div class="logo-container">
+      <div class="app-icon">
+        <img class="logo" src="assets/logo.svg">
+      </div>
+      <div class="app-title-group">
+        <h1>Conecta Saúde</h1>
+        <span class="badge-pe">PE</span>
+      </div>
+    </div>
+  </div>
+
+  <form class="form-container" [formGroup]="cadastroForm">
+
+    <!-- ETAPA 1 -->
+    <div *ngIf="etapaAtual === 1" class="step-section">
+      <span class="step-tag">CRIAR CONTA</span>
+      <h2>Dados pessoais</h2>
+      <p class="step-subtitle">Conte-nos um pouco sobre você.</p>
+
+      <div class="stepper-indicator">
+        <div class="step-item active">1</div>
+        <div class="step-line"></div>
+        <div class="step-item">2</div>
+        <div class="step-line"></div>
+        <div class="step-item">3</div>
+      </div>
+      <span class="step-info">Etapa 1 de 3 &bull; Dados pessoais</span>
+
+      <div class="input-group">
+        <label>Nome completo <span class="required-asterisk">*</span></label>
+        <ion-item lines="none" class="custom-input" [class.input-error]="campoInvalido('nome')">
+          <ion-input formControlName="nome" placeholder="Como está no documento"></ion-input>
+        </ion-item>
+        <small *ngIf="campoInvalido('nome')" class="field-error">O nome completo é obrigatório.</small>
+      </div>
+
+      <div class="input-group">
+        <label>CPF <span class="required-asterisk">*</span></label>
+        <ion-item lines="none" class="custom-input" [class.input-error]="campoInvalido('cpf')">
+          <ion-input
+            formControlName="cpf"
+            (ionInput)="formatarCpf($event)"
+            maxlength="14"
+            inputmode="numeric"
+            placeholder="000.000.000-00">
+          </ion-input>
+        </ion-item>
+        <small *ngIf="campoInvalido('cpf')" class="field-error">Informe um CPF válido com 11 dígitos.</small>
+      </div>
+
+      <div class="input-group">
+        <label>Data de nascimento <span class="required-asterisk">*</span></label>
+        <ion-item lines="none" class="custom-input" [class.input-error]="campoInvalido('dataNascimento')">
+          <ion-input
+            formControlName="dataNascimento"
+            (ionInput)="formatarData($event)"
+            maxlength="10"
+            inputmode="numeric"
+            placeholder="DD/MM/AAAA">
+          </ion-input>
+        </ion-item>
+        <small *ngIf="campoInvalido('dataNascimento')" class="field-error">Informe uma data válida (DD/MM/AAAA).</small>
+      </div>
+
+      <ion-button expand="block" class="action-button" (click)="proximaEtapa()">
+        Continuar 
+      </ion-button>
+    </div>
+
+    <!-- ETAPA 2 -->
+    <div *ngIf="etapaAtual === 2" class="step-section">
+      <span class="step-tag">CRIAR CONTA</span>
+      <h2>Contato e localização</h2>
+      <p class="step-subtitle">Usaremos esses dados para falar com você.</p>
+
+      <div class="stepper-indicator">
+        <div class="step-item completed"><ion-icon name="checkmark"></ion-icon></div>
+        <div class="step-line active"></div>
+        <div class="step-item active">2</div>
+        <div class="step-line"></div>
+        <div class="step-item">3</div>
+      </div>
+      <span class="step-info">Etapa 2 de 3 &bull; Contato e localização</span>
+
+      <div class="input-group">
+        <label>Telefone <span class="required-asterisk">*</span></label>
+        <ion-item lines="none" class="custom-input" [class.input-error]="campoInvalido('telefone')">
+          <ion-input
+            formControlName="telefone"
+            (ionInput)="formatarTelefone($event)"
+            maxlength="15"
+            inputmode="tel"
+            placeholder="(00) 00000-0000">
+          </ion-input>
+        </ion-item>
+        <small *ngIf="campoInvalido('telefone')" class="field-error">Informe um telefone válido com DDD.</small>
+      </div>
+
+      <div class="input-group">
+        <label>Cidade de origem <span class="required-asterisk">*</span></label>
+        <ion-item lines="none" class="custom-input" [class.input-error]="campoInvalido('cidadeOrigem')">
+          <ion-input formControlName="cidadeOrigem" placeholder="Ex.: Caruaru"></ion-input>
+        </ion-item>
+        <small *ngIf="campoInvalido('cidadeOrigem')" class="field-error">A cidade de origem é obrigatória.</small>
+        <small *ngIf="!campoInvalido('cidadeOrigem')" class="input-hint">Informe sua cidade no interior de Pernambuco.</small>
+      </div>
+
+      <div class="input-group">
+        <label>E-mail <span class="required-asterisk">*</span></label>
+        <ion-item lines="none" class="custom-input" [class.input-error]="campoInvalido('email')">
+          <ion-input formControlName="email" placeholder="voce@email.com"></ion-input>
+        </ion-item>
+        <small *ngIf="campoInvalido('email')" class="field-error">Informe um e-mail válido.</small>
+      </div>
+
+      <ion-button expand="block" class="action-button" (click)="proximaEtapa()">
+        Continuar
+      </ion-button>
+    </div>
+
+    <!-- ETAPA 3 -->
+    <div *ngIf="etapaAtual === 3" class="step-section">
+      <span class="step-tag">CRIAR CONTA</span>
+      <h2>Crie sua senha</h2>
+      <p class="step-subtitle">Falta pouco para concluir seu cadastro.</p>
+
+      <div class="stepper-indicator">
+        <div class="step-item completed"><ion-icon name="checkmark"></ion-icon></div>
+        <div class="step-line active"></div>
+        <div class="step-item completed"><ion-icon name="checkmark"></ion-icon></div>
+        <div class="step-line active"></div>
+        <div class="step-item active">3</div>
+      </div>
+      <span class="step-info">Etapa 3 de 3 &bull; Crie sua senha</span>
+
+      <div class="input-group">
+        <label>Senha <span class="required-asterisk">*</span></label>
+        <ion-item lines="none" class="custom-input" [class.input-error]="campoInvalido('senha')">
+          <ion-input
+            formControlName="senha"
+            [type]="mostrarSenha ? 'text' : 'password'"
+            placeholder="Crie uma senha">
+          </ion-input>
+          <ion-button
+            fill="clear"
+            slot="end"
+            type="button"
+            class="toggle-password-btn"
+            (click)="mostrarSenha = !mostrarSenha"
+            aria-label="Mostrar ou ocultar senha">
+            <ion-icon slot="icon-only" [name]="mostrarSenha ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <small *ngIf="campoInvalido('senha')" class="field-error">A senha deve ter pelo menos 8 caracteres.</small>
+        <small *ngIf="!campoInvalido('senha')" class="input-hint">Use pelo menos 8 caracteres.</small>
+      </div>
+
+      <div class="input-group">
+        <label>Confirme sua senha <span class="required-asterisk">*</span></label>
+        <ion-item lines="none" class="custom-input" [class.input-error]="campoInvalido('confirmarSenha') || senhasNaoCoincidem()">
+          <ion-input
+            formControlName="confirmarSenha"
+            [type]="mostrarSenhaConfirm ? 'text' : 'password'"
+            placeholder="Digite a senha novamente">
+          </ion-input>
+          <ion-button
+            fill="clear"
+            slot="end"
+            type="button"
+            class="toggle-password-btn"
+            (click)="mostrarSenhaConfirm = !mostrarSenhaConfirm"
+            aria-label="Mostrar ou ocultar confirmação de senha">
+            <ion-icon slot="icon-only" [name]="mostrarSenhaConfirm ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <small *ngIf="campoInvalido('confirmarSenha')" class="field-error">A confirmação de senha é obrigatória.</small>
+        <small *ngIf="!campoInvalido('confirmarSenha') && senhasNaoCoincidem()" class="field-error">As senhas não coincidem.</small>
+      </div>
+
+      <ion-button expand="block" class="action-button" (click)="finalizarCadastro()">
+        Cadastrar
+      </ion-button>
+    </div>
+
+    <div style="text-align: center; margin-top: 18px; font-size: 13px; color: #64748b;">
+      Já tem uma conta?
+      <a href="#" (click)="$event.preventDefault(); voltarParaLogin()" style="color: #0051d4; font-weight: 600; text-decoration: none;">
+        Entrar
+      </a>
+    </div>
+
+    <div class="terms-footer">
+      Ao continuar, você concorda com os Termos de Uso e a Política de Privacidade.
+    </div>
+
+  </form>
+</ion-content>
