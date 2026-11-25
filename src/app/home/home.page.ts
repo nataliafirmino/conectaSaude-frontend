@@ -14,7 +14,7 @@ export class HomePage {
     tipo: 'Consulta médica',
     status: 'Confirmado',
     hospital: 'Hospital da Restauração',
-    profissional: 'Dra. Mariana Costa',
+    medico: 'Dra. Mariana Costa',
     especialidade: 'Cardiologia',
     data: '24 de junho',
     horario: '09:30'

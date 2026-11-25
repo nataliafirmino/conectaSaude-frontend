@@ -1,0 +1,300 @@
+<ion-content class="agendar-content" [fullscreen]="true">
+
+  <div class="top-header">
+    <ion-button fill="clear" class="back-button" (click)="etapaAnterior()">
+      <ion-icon name="chevron-back-outline"></ion-icon>
+    </ion-button>
+
+    <div class="header-titles">
+      <h2>
+        <span *ngIf="etapaAtual() === 1">Escolha o atendimento</span>
+        <span *ngIf="etapaAtual() === 2">Escolha a unidade</span>
+        <span *ngIf="etapaAtual() === 3">Escolha o médico</span>
+        <span *ngIf="etapaAtual() === 4">Data e horário</span>
+        <span *ngIf="etapaAtual() === 5">Revise os dados</span>
+        <span *ngIf="etapaAtual() === 6">Tudo certo, {{ nomeUsuario() }}!</span>
+      </h2>
+      <p>
+        <span *ngIf="etapaAtual() === 1">Consulta ou exame</span>
+        <span *ngIf="etapaAtual() === 2">Hospitais disponíveis em Recife</span>
+        <span *ngIf="etapaAtual() === 3">Médicos disponíveis</span>
+        <span *ngIf="etapaAtual() === 4">Vagas para {{ mesesDisponiveis[mesAtualIndex].nome.toLowerCase() }}</span>
+        <span *ngIf="etapaAtual() === 5">Confira antes de confirmar</span>
+        <span *ngIf="etapaAtual() === 6">Sua consulta foi reservada com sucesso.</span>
+      </p>
+    </div>
+  </div>
+
+  <div class="progress-bar-line" *ngIf="etapaAtual() <= 5">
+    <div class="progress-fill" [style.width.%]="(etapaAtual() / 5) * 100"></div>
+  </div>
+
+  <div class="form-container">
+
+    <div *ngIf="etapaAtual() === 1" class="step-section">
+      <span class="step-tag">ETAPA 1 DE 5</span>
+
+      <div class="selectable-card"
+           [class.selected]="agendamento.especialidade === 'Cardiologia'"
+           (click)="selecionarEspecialidade('Cardiologia', 'Coração e circulação')">
+        <div class="card-icon"><ion-icon name="medical-outline"></ion-icon></div>
+        <div class="card-info">
+          <h3>Cardiologia</h3>
+          <p>Coração e circulação</p>
+        </div>
+        <div class="radio-check" *ngIf="agendamento.especialidade === 'Cardiologia'"><ion-icon name="checkmark"></ion-icon></div>
+        <div class="radio-circle" *ngIf="agendamento.especialidade !== 'Cardiologia'"></div>
+      </div>
+
+      <div class="selectable-card"
+           [class.selected]="agendamento.especialidade === 'Ortopedia'"
+           (click)="selecionarEspecialidade('Ortopedia', 'Ossos, músculos e articulações')">
+        <div class="card-icon"><ion-icon name="fitness-outline"></ion-icon></div>
+        <div class="card-info">
+          <h3>Ortopedia</h3>
+          <p>Ossos, músculos e articulações</p>
+        </div>
+        <div class="radio-check" *ngIf="agendamento.especialidade === 'Ortopedia'"><ion-icon name="checkmark"></ion-icon></div>
+        <div class="radio-circle" *ngIf="agendamento.especialidade !== 'Ortopedia'"></div>
+      </div>
+
+      <div class="selectable-card"
+           [class.selected]="agendamento.especialidade === 'Oftalmologia'"
+           (click)="selecionarEspecialidade('Oftalmologia', 'Saúde dos olhos')">
+        <div class="card-icon"><ion-icon name="eye-outline"></ion-icon></div>
+        <div class="card-info">
+          <h3>Oftalmologia</h3>
+          <p>Saúde dos olhos</p>
+        </div>
+        <div class="radio-check" *ngIf="agendamento.especialidade === 'Oftalmologia'"><ion-icon name="checkmark"></ion-icon></div>
+        <div class="radio-circle" *ngIf="agendamento.especialidade !== 'Oftalmologia'"></div>
+      </div>
+
+      <div class="selectable-card"
+           [class.selected]="agendamento.especialidade === 'Exames de imagem'"
+           (click)="selecionarEspecialidade('Exames de imagem', 'Ultrassom, raio-X e tomografia')">
+        <div class="card-icon"><ion-icon name="document-text-outline"></ion-icon></div>
+        <div class="card-info">
+          <h3>Exames de imagem</h3>
+          <p>Ultrassom, raio-X e tomografia</p>
+        </div>
+        <div class="radio-check" *ngIf="agendamento.especialidade === 'Exames de imagem'"><ion-icon name="checkmark"></ion-icon></div>
+        <div class="radio-circle" *ngIf="agendamento.especialidade !== 'Exames de imagem'"></div>
+      </div>
+
+      <ion-button expand="block" class="action-button" (click)="proximaEtapa()">
+        Continuar <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div *ngIf="etapaAtual() === 2" class="step-section">
+      <span class="step-tag">ETAPA 2 DE 5</span>
+
+      <div class="search-box">
+        <ion-icon name="search-outline"></ion-icon>
+        <input
+          type="text"
+          [ngModel]="buscaHospital()"
+          (ngModelChange)="buscaHospital.set($event)"
+          placeholder="Buscar hospital em Recife">
+      </div>
+
+      <p *ngIf="carregando()">Carregando unidades...</p>
+      <p *ngIf="!carregando() && hospitaisFiltrados().length === 0">Nenhuma unidade ativa encontrada.</p>
+
+      <div class="selectable-card"
+           *ngFor="let h of hospitaisFiltrados()"
+           [class.selected]="agendamento.idHospital === h.id"
+           (click)="selecionarHospital(h)">
+        <div class="card-icon"><ion-icon name="business-outline"></ion-icon></div>
+        <div class="card-info">
+          <h3>{{ h.nome }}</h3>
+          <p>{{ h.endereco }}</p>
+        </div>
+        <div class="radio-check" *ngIf="agendamento.idHospital === h.id"><ion-icon name="checkmark"></ion-icon></div>
+        <div class="radio-circle" *ngIf="agendamento.idHospital !== h.id"></div>
+      </div>
+
+      <ion-button expand="block" class="action-button" (click)="proximaEtapa()">
+        Continuar <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div *ngIf="etapaAtual() === 3" class="step-section">
+      <span class="step-tag">ETAPA 3 DE 5</span>
+
+      <p *ngIf="carregando()">Carregando médicos...</p>
+      <p *ngIf="!carregando() && medicos().length === 0">Nenhum médico ativo encontrado para esta unidade.</p>
+
+      <div class="selectable-card"
+           *ngFor="let m of medicos()"
+           [class.selected]="agendamento.idMedico === m.id"
+           (click)="selecionarProfissional(m)">
+        <div class="card-icon"><ion-icon name="person-outline"></ion-icon></div>
+        <div class="card-info">
+          <h3>{{ m.nome }}</h3>
+          <p>{{ m.especialidade }} • {{ agendamento.hospital }}</p>
+        </div>
+        <div class="radio-check" *ngIf="agendamento.idMedico === m.id"><ion-icon name="checkmark"></ion-icon></div>
+        <div class="radio-circle" *ngIf="agendamento.idMedico !== m.id"></div>
+      </div>
+
+      <ion-button expand="block" class="action-button" (click)="proximaEtapa()">
+        Continuar <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div *ngIf="etapaAtual() === 4" class="step-section">
+      <span class="step-tag">ETAPA 4 DE 5</span>
+
+      <div class="calendar-picker-box">
+        <div class="cal-header">
+          <ion-button fill="clear" (click)="mudarMes(-1)">
+            <ion-icon name="chevron-back-outline"></ion-icon>
+          </ion-button>
+          <span>{{ mesesDisponiveis[mesAtualIndex].nome }}</span>
+          <ion-button fill="clear" (click)="mudarMes(1)">
+            <ion-icon name="chevron-forward-outline"></ion-icon>
+          </ion-button>
+        </div>
+        <div class="days-row">
+          <div class="day-item"
+               *ngFor="let d of mesesDisponiveis[mesAtualIndex].dias"
+               [class.active]="diaSelecionado === d"
+               (click)="selecionarDia(d)">
+            <span>DIA</span>
+            <strong>{{ d }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="available-badge">
+        <ion-icon name="calendar-outline"></ion-icon> Horários disponíveis para {{ diaSelecionado }} de {{ mesesDisponiveis[mesAtualIndex].nome.toLowerCase() }}
+      </div>
+
+      <h3 class="mini-title">Escolha um horário</h3>
+      <div class="time-grid">
+        <div class="time-slot" [class.active]="agendamento.horario === '08:00'" (click)="selecionarHorario('08:00')">08:00</div>
+        <div class="time-slot" [class.active]="agendamento.horario === '08:45'" (click)="selecionarHorario('08:45')">08:45</div>
+        <div class="time-slot" [class.active]="agendamento.horario === '09:30'" (click)="selecionarHorario('09:30')">09:30</div>
+        <div class="time-slot" [class.active]="agendamento.horario === '10:15'" (click)="selecionarHorario('10:15')">10:15</div>
+        <div class="time-slot" [class.active]="agendamento.horario === '14:00'" (click)="selecionarHorario('14:00')">14:00</div>
+        <div class="time-slot" [class.active]="agendamento.horario === '15:30'" (click)="selecionarHorario('15:30')">15:30</div>
+      </div>
+
+      <ion-button expand="block" class="action-button" (click)="proximaEtapa()">
+        Continuar <ion-icon slot="end" name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div *ngIf="etapaAtual() === 5" class="step-section">
+      <span class="step-tag">ETAPA 5 DE 5</span>
+
+      <div class="info-alert-box">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        <span>Revise os dados abaixo. Você poderá cancelar depois, se necessário.</span>
+      </div>
+
+      <div class="review-item">
+        <ion-icon name="medical-outline" class="ri-icon"></ion-icon>
+        <div class="ri-text">
+          <small>Especialidade</small>
+          <strong>{{ agendamento.especialidade }}</strong>
+        </div>
+      </div>
+
+      <div class="review-item">
+        <ion-icon name="business-outline" class="ri-icon"></ion-icon>
+        <div class="ri-text">
+          <small>Hospital</small>
+          <strong>{{ agendamento.hospital }}</strong>
+        </div>
+      </div>
+
+      <div class="review-item">
+        <ion-icon name="person-outline" class="ri-icon"></ion-icon>
+        <div class="ri-text">
+          <small>Médico</small>
+          <strong>{{ agendamento.profissional }}</strong>
+        </div>
+      </div>
+
+      <div class="review-item">
+        <ion-icon name="calendar-outline" class="ri-icon"></ion-icon>
+        <div class="ri-text">
+          <small>Data</small>
+          <strong>{{ agendamento.data }}</strong>
+        </div>
+      </div>
+
+      <div class="review-item">
+        <ion-icon name="time-outline" class="ri-icon"></ion-icon>
+        <div class="ri-text">
+          <small>Horário</small>
+          <strong>{{ agendamento.horario }}</strong>
+        </div>
+      </div>
+
+      <ion-button expand="block" class="action-button" [disabled]="confirmando()" (click)="confirmarAgendamento()">
+        {{ confirmando() ? 'Confirmando...' : 'Confirmar agendamento' }}
+        <ion-icon slot="end" name="checkmark-outline"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div *ngIf="etapaAtual() === 6" class="step-section success-screen">
+      <div class="success-icon-container">
+        <ion-icon name="checkmark"></ion-icon>
+      </div>
+
+      <span class="success-tag">AGENDAMENTO CONFIRMADO</span>
+      <h2>Tudo certo, {{ nomeUsuario() }}!</h2>
+      <p class="success-sub">Sua consulta foi reservada. Você também receberá os detalhes por e-mail.</p>
+
+      <div class="protocol-box">
+        <span>Protocolo</span>
+        <strong>CSPE-{{ consultaCriada()?.id || '000' }}</strong>
+      </div>
+
+      <div class="appointment-card">
+        <div class="appointment-header">
+          <div class="appt-type">
+            <ion-icon name="medical-outline"></ion-icon>
+            <span>{{ consultaCriada()?.tipo || agendamento.tipo }}</span>
+          </div>
+          <div class="status-badge">
+            <span class="dot"></span> {{ consultaCriada()?.status || 'AGENDADA' }}
+          </div>
+        </div>
+
+        <h4>{{ consultaCriada()?.nomeHospital || agendamento.hospital }}</h4>
+        <p class="doctor-name">{{ consultaCriada()?.nomeMedico || agendamento.profissional }}</p>
+        <p class="specialty">{{ consultaCriada()?.especialidadeMedico || agendamento.especialidade }}</p>
+
+        <div class="date-time-box">
+          <div class="dt-item">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{ agendamento.data }}</span>
+          </div>
+          <div class="dt-item">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{ agendamento.horario }}</span>
+          </div>
+        </div>
+
+        <div class="card-footer-action" (click)="irParaConsultas()">
+          <span>Ver detalhes</span>
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </div>
+      </div>
+
+      <ion-button expand="block" class="action-button" (click)="irParaConsultas()">
+        Ver meus agendamentos
+      </ion-button>
+
+      <div class="back-home-link" (click)="voltarInicio()">
+        Voltar ao início
+      </div>
+    </div>
+
+  </div>
+</ion-content>
