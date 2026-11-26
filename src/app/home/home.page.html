@@ -2,26 +2,26 @@
   <div class="hero-header">
     <div class="brand-row">
       <div class="logo-box">
-        <ion-icon name="heart-outline"></ion-icon>
+        <img src="assets/logo.svg" alt="Logo ConectaSaudePe">
       </div>
+
       <div class="brand-name">
         <strong>Conecta Saúde</strong>
         <span>PE</span>
       </div>
     </div>
 
-    <p class="greeting">Olá, {{ usuarioNome }}</p>
+    <p class="greeting">Olá, {{ usuarioNome() }}</p>
     <h1>Como podemos cuidar de você?</h1>
   </div>
 
   <div class="main-body">
-
     <h2 class="section-title">Acesso rápido</h2>
-
     <div class="quick-card primary" routerLink="/agendar">
       <div class="icon-wrapper">
         <ion-icon name="calendar-outline"></ion-icon>
       </div>
+
       <div class="card-text">
         <h3>Agendar consulta ou exame</h3>
         <p>Encontre o cuidado que precisa</p>
@@ -33,6 +33,7 @@
       <div class="icon-wrapper">
         <ion-icon name="clipboard-outline"></ion-icon>
       </div>
+
       <div class="card-text">
         <h3>Minhas consultas</h3>
         <p>Acompanhe seus agendamentos</p>
@@ -42,42 +43,73 @@
 
     <div class="section-header-row">
       <h2 class="section-title">Próximo agendamento</h2>
-      <button class="btn-see-all" routerLink="/agendamento">
+      <button class="btn-see-all" routerLink="/consultas">
         Ver todos
       </button>
     </div>
 
-    <div class="next-appt-card">
+    <div class="next-appt-card" *ngIf="carregandoProximo()">
+      <p>Carregando seu próximo agendamento...</p>
+    </div>
+
+    <div class="next-appt-card"
+      *ngIf="!carregandoProximo() && proximoAgendamento() as proximo">
+
       <div class="card-top">
         <div class="type-label">
           <ion-icon name="medkit-outline"></ion-icon>
-          <span>{{ proximoAgendamento.tipo }}</span>
+          <span>{{ proximo.tipo }}</span>
         </div>
+
         <span class="status-badge">
-          <span class="dot"></span> {{ proximoAgendamento.status }}
+          <span class="dot"></span>
+          {{ proximo.status }}
         </span>
       </div>
 
-      <h3>{{ proximoAgendamento.hospital }}</h3>
-      <p class="doctor">{{ proximoAgendamento.medico }}</p>
-      <p class="specialty">{{ proximoAgendamento.especialidade }}</p>
+      <h3>{{ proximo.hospital }}</h3>
+
+      <p class="doctor">{{ proximo.medico }}</p>
+      <p class="specialty">{{ proximo.especialidade }}</p>
 
       <div class="datetime-box">
+
         <div class="dt-item">
           <ion-icon name="calendar-outline"></ion-icon>
-          <span>{{ proximoAgendamento.data }}</span>
+          <span>{{ proximo.data }}</span>
         </div>
+
         <div class="dt-item">
           <ion-icon name="time-outline"></ion-icon>
-          <span>{{ proximoAgendamento.horario }}</span>
+          <span>{{ proximo.horario }}</span>
         </div>
+
       </div>
 
       <div class="card-footer-link">
         <button class="btn-details-link" routerLink="/consultas">
-          Ver detalhes <ion-icon name="chevron-forward-outline"></ion-icon>
+          Ver detalhes
+          <ion-icon name="chevron-forward-outline"></ion-icon>
         </button>
       </div>
+
+    </div>
+
+    <div class="next-appt-card empty-state" *ngIf="!carregandoProximo() && !proximoAgendamento()">
+      <ion-icon name="calendar-clear-outline"></ion-icon>
+      <h3>Nenhum agendamento próximo</h3>
+      <p *ngIf="!mensagemErro()">
+        Você ainda não possui consultas ou exames agendados.
+      </p>
+
+      <p *ngIf="mensagemErro()">
+        {{ mensagemErro() }}
+      </p>
+
+      <button class="btn-details-link" routerLink="/agendar">
+        Agendar agora
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
     </div>
 
   </div>

@@ -24,7 +24,7 @@ export interface MedicoItem {
 export interface ConsultaPayload {
   tipo: string;
   dataAgendamento: string;
-  horaAgendamento: string; 
+  horaAgendamento: string;
   idPaciente: number;
   idHospital: number;
   idMedico: number;
@@ -35,7 +35,7 @@ export interface ConsultaResponse {
   tipo: string;
   dataAgendamento: string;
   horaAgendamento: string;
-  status: string;
+  status: 'AGENDADA' | 'CANCELADA' | 'REALIZADA';
   idPaciente: number;
   nomePaciente: string;
   idHospital: number;
@@ -46,7 +46,7 @@ export interface ConsultaResponse {
 }
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class ConsultaService {
   private readonly apiUrl = environment.apiUrl;
@@ -54,20 +54,39 @@ export class ConsultaService {
   constructor(private http: HttpClient) {}
 
   listarHospitaisAtivos(): Observable<HospitalItem[]> {
-    return this.http.get<HospitalItem[]>(`${this.apiUrl}/hospital/ativos`, {
-      withCredentials: true,
-    });
+    return this.http.get<HospitalItem[]>(
+      `${this.apiUrl}/hospital/ativos`,
+      { withCredentials: true }
+    );
   }
 
   listarMedicosPorHospital(idHospital: number): Observable<MedicoItem[]> {
-    return this.http.get<MedicoItem[]>(`${this.apiUrl}/medico/hospital/${idHospital}`, {
-      withCredentials: true,
-    });
+    return this.http.get<MedicoItem[]>(
+      `${this.apiUrl}/medico/hospital/${idHospital}`,
+      { withCredentials: true }
+    );
   }
 
   agendarConsulta(dados: ConsultaPayload): Observable<ConsultaResponse> {
-    return this.http.post<ConsultaResponse>(`${this.apiUrl}/consulta`, dados, {
-      withCredentials: true,
-    });
+    return this.http.post<ConsultaResponse>(
+      `${this.apiUrl}/consulta`,
+      dados,
+      { withCredentials: true }
+    );
+  }
+
+  listarPorPaciente(idPaciente: number): Observable<ConsultaResponse[]> {
+    return this.http.get<ConsultaResponse[]>(
+      `${this.apiUrl}/consulta/paciente/${idPaciente}`,
+      { withCredentials: true }
+    );
+  }
+
+  cancelarConsulta(id: number): Observable<ConsultaResponse> {
+    return this.http.patch<ConsultaResponse>(
+      `${this.apiUrl}/consulta/${id}`,
+      {},
+      { withCredentials: true }
+    );
   }
 }

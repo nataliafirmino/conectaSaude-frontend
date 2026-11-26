@@ -1,0 +1,373 @@
+
+<ion-content class="agendamentos-content" [fullscreen]="true">
+
+  <div class="page-header">
+    <div class="header-text">
+      <span class="eyebrow">SUA SAÚDE</span>
+      <h1>Meus agendamentos</h1>
+      <p>Acompanhe consultas e exames.</p>
+    </div>
+
+    <button class="btn-add-circle" routerLink="/agendar">
+      <ion-icon name="add-outline"></ion-icon>
+    </button>
+  </div>
+
+  <div class="segmented-tabs">
+    <button
+      class="seg-btn"
+      [class.active]="abaAtiva() === 'proximos'"
+      (click)="selecionarAba('proximos')">
+
+      Próximos
+      <span class="badge-count">
+        {{ proximosAgendamentos().length }}
+      </span>
+    </button>
+
+    <button
+      class="seg-btn"
+      [class.active]="abaAtiva() === 'historico'"
+      (click)="selecionarAba('historico')">
+
+      Histórico
+      <span class="badge-count">
+        {{ historicoAgendamentos().length }}
+      </span>
+    </button>
+  </div>
+
+  <div class="loading-state" *ngIf="carregando()">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Carregando seus agendamentos...</p>
+  </div>
+
+  <div class="error-message" *ngIf="mensagemErro()">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <p>{{ mensagemErro() }}</p>
+  </div>
+
+  <div class="cancel-toast-banner" *ngIf="mostrarBannerCancelado()">
+    <div class="toast-left">
+      <ion-icon name="checkmark-outline" class="check-icon"></ion-icon>
+
+      <div class="toast-text">
+        <p>Agendamento cancelado e movido para o histórico.</p>
+
+        <button
+          class="link-historico"
+          (click)="irParaHistorico()">
+          Ver histórico
+        </button>
+      </div>
+    </div>
+
+    <button
+      class="btn-close-toast"
+      (click)="isBannerCancelado()">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+  </div>
+
+  <div class="tab-body" *ngIf="abaAtiva() === 'proximos'">
+
+    <p class="section-subtitle">
+      Suas próximas consultas e exames em Recife.
+    </p>
+
+    <div
+      class="appt-card"
+      *ngFor="let item of proximosAgendamentos()">
+
+      <div class="card-top">
+        <div class="type-label">
+          <ion-icon [name]="item.icone"></ion-icon>
+          <span>{{ item.tipoAtendimento }}</span>
+        </div>
+
+        <span
+          class="status-pill"
+          [ngClass]="item.status.toLowerCase()">
+
+          <span class="dot"></span>
+          {{ item.status }}
+        </span>
+      </div>
+
+      <h3>{{ item.hospital }}</h3>
+      <p class="prof-name">{{ item.profissional }}</p>
+      <p class="spec-name">{{ item.especialidade }}</p>
+
+      <div class="datetime-banner">
+        <div class="dt-col">
+          <ion-icon name="calendar-outline"></ion-icon>
+          <span>{{ item.dataCurta }}</span>
+        </div>
+
+        <div class="dt-col">
+          <ion-icon name="time-outline"></ion-icon>
+          <span>{{ item.horario }}</span>
+        </div>
+      </div>
+
+      <div class="card-buttons-row">
+        <button
+          class="btn-outline-blue"
+          (click)="abrirDetalhes(item)">
+          Ver detalhes
+        </button>
+
+        <button
+          class="btn-outline-red"
+          (click)="abrirCancelar(item)">
+          Cancelar
+        </button>
+      </div>
+    </div>
+
+    <div
+      class="empty-state-card"
+      *ngIf="
+        proximosAgendamentos().length === 0 &&
+        !carregando() &&
+        !mensagemErro()
+      ">
+
+      <div class="empty-icon-box">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </div>
+
+      <h3>Nenhum agendamento por aqui</h3>
+
+      <p>
+        Quando você agendar uma consulta ou exame,
+        ele aparecerá nesta lista.
+      </p>
+
+      <button
+        class="btn-primary-blue"
+        routerLink="/agendar">
+        Agendar atendimento
+      </button>
+    </div>
+  </div>
+
+  <div class="tab-body" *ngIf="abaAtiva() === 'historico'">
+
+    <div class="history-info-box">
+      <div class="history-icon">
+        <ion-icon name="time-outline"></ion-icon>
+      </div>
+
+      <div>
+        <h4>Seu histórico de cuidados</h4>
+        <p>Consultas e exames realizados ou cancelados.</p>
+      </div>
+    </div>
+
+    <p class="found-count">
+      {{ historicoAgendamentos().length }} atendimentos encontrados
+    </p>
+
+    <div
+      class="month-group"
+      *ngFor="let grupo of historicoAgrupado()">
+
+      <div class="month-divider">
+        <span>{{ grupo.mes }}</span>
+        <div class="line"></div>
+      </div>
+
+      <div
+        class="appt-card"
+        *ngFor="let item of grupo.itens">
+
+        <div class="card-top">
+          <div class="type-label">
+            <ion-icon [name]="item.icone"></ion-icon>
+            <span>{{ item.tipoAtendimento }}</span>
+          </div>
+
+          <span
+            class="status-pill"
+            [ngClass]="item.status.toLowerCase()">
+
+            <span class="dot"></span>
+            {{ item.status }}
+          </span>
+        </div>
+
+        <h3>{{ item.hospital }}</h3>
+        <p class="prof-name">{{ item.profissional }}</p>
+        <p class="spec-name">{{ item.especialidade }}</p>
+
+        <div class="datetime-banner">
+          <div class="dt-col">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{ item.dataCurta }}</span>
+          </div>
+
+          <div class="dt-col">
+            <ion-icon name="time-outline"></ion-icon>
+            <span>{{ item.horario }}</span>
+          </div>
+        </div>
+
+        <button
+          class="btn-outline-blue full-width"
+          (click)="abrirDetalhes(item)">
+          Ver detalhes
+        </button>
+      </div>
+    </div>
+
+    <!-- Estado vazio do histórico -->
+    <div
+      class="empty-state-card"
+      *ngIf="
+        historicoAgendamentos().length === 0 &&
+        !carregando() &&
+        !mensagemErro()
+      ">
+
+      <div class="empty-icon-box">
+        <ion-icon name="time-outline"></ion-icon>
+      </div>
+
+      <h3>Nenhum atendimento no histórico</h3>
+
+      <p>
+        Seus atendimentos realizados ou cancelados
+        aparecerão aqui.
+      </p>
+    </div>
+  </div>
+
+  <div
+    class="custom-modal-backdrop"
+    *ngIf="modalDetalhesAberto()"
+    (click)="fecharDetalhes()">
+
+    <div
+      class="custom-modal-sheet"
+      *ngIf="itemSelecionado() as item"
+      (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <div>
+          <h2>Detalhes do atendimento</h2>
+          <p>Confira as informações deste agendamento.</p>
+        </div>
+
+        <button
+          class="btn-close-circle"
+          (click)="fecharDetalhes()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="modal-type-row">
+        <span class="blue-bold">
+          {{ item.tipoAtendimento }}
+        </span>
+
+        <span
+          class="status-pill"
+          [ngClass]="item.status.toLowerCase()">
+
+          <span class="dot"></span>
+          {{ item.status }}
+        </span>
+      </div>
+
+      <div class="detail-list">
+        <div class="detail-row">
+          <small>Hospital</small>
+          <strong>{{ item.hospital }}</strong>
+        </div>
+
+        <div class="detail-row">
+          <small>Profissional</small>
+          <strong>{{ item.profissional }}</strong>
+        </div>
+
+        <div class="detail-row">
+          <small>Especialidade</small>
+          <strong>{{ item.especialidade }}</strong>
+        </div>
+
+        <div class="detail-row">
+          <small>Data</small>
+          <strong>{{ item.data }}</strong>
+        </div>
+
+        <div class="detail-row">
+          <small>Horário</small>
+          <strong>{{ item.horario }}</strong>
+        </div>
+      </div>
+
+      <button
+        class="btn-outline-blue full-width modal-btn"
+        (click)="fecharDetalhes()">
+        Fechar detalhes
+      </button>
+    </div>
+  </div>
+
+  <div
+    class="custom-modal-backdrop"
+    *ngIf="modalCancelarAberto()"
+    (click)="fecharCancelar()">
+
+    <div
+      class="custom-modal-sheet"
+      *ngIf="itemSelecionado() as item"
+      (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <div>
+          <h2>Cancelar consulta?</h2>
+          <p>
+            A vaga será liberada para outra pessoa.
+            Você poderá fazer um novo agendamento depois.
+          </p>
+        </div>
+
+        <button
+          class="btn-close-circle"
+          (click)="fecharCancelar()">
+          <ion-icon name="close-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="cancel-warning-box">
+        <ion-icon name="calendar-outline"></ion-icon>
+
+        <div>
+          <strong>
+            {{ item.dataCurta }}, às {{ item.horario }}
+          </strong>
+
+          <span>{{ item.hospital }}</span>
+        </div>
+      </div>
+
+      <button
+        class="btn-solid-red"f
+        [disabled]="cancelando()"
+        (click)="confirmarCancelamento()">
+
+        {{ cancelando() ? 'Cancelando...' : 'Sim, cancelar consulta' }}
+      </button>
+
+      <button
+        class="btn-outline-blue full-width"
+        [disabled]="cancelando()"
+        (click)="fecharCancelar()">
+        Manter consulta
+      </button>
+    </div>
+  </div>
+
+</ion-content>

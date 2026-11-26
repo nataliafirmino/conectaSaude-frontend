@@ -4,29 +4,36 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'app/home', 
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
-    path: '',
-    loadChildren: () => import('./menu-inferior/menu-inferior.module').then(m => m.MenuInferiorPageModule)
-  },  {
     path: 'login',
-    loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
+    loadChildren: () => import('./login/login.module')
+      .then(m => m.LoginPageModule)
   },
   {
     path: 'cadastro',
-    loadChildren: () => import('./cadastro/cadastro.module').then( m => m.CadastroPageModule)
+    loadChildren: () => import('./cadastro/cadastro.module')
+      .then(m => m.CadastroPageModule)
   },
   {
     path: 'agendar',
-    loadChildren: () => import('./agendar/agendar.module').then( m => m.AgendarPageModule)
+    loadChildren: () => import('./agendar/agendar.module')
+      .then(m => m.AgendarPageModule)
+  },
+  {
+    path: '',
+    loadChildren: () => import('./menu-inferior/menu-inferior.module')
+      .then(m => m.MenuInferiorPageModule)
   }
-
 ];
+
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules })
+    RouterModule.forRoot(routes, {
+      preloadingStrategy: PreloadAllModules
+    })
   ],
   exports: [RouterModule]
 })

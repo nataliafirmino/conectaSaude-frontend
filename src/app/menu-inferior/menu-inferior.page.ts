@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-menu-inferior',
@@ -7,11 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./menu-inferior.page.scss'],
   standalone: false,
 })
-export class MenuInferiorPage implements OnInit {
+export class MenuInferiorPage {
 
   constructor() { }
-
-  ngOnInit() {
-  }
 
 }

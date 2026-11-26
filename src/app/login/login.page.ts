@@ -53,10 +53,18 @@ export class LoginPage implements OnInit {
     this.authService.loginPaciente({ email: emailLimpo, senha: this.senha }).subscribe({
       next: async (sessao) => {
         this.carregando = false;
+
         if (sessao?.autenticado) {
-          this.router.navigate(['/home']);
+          this.router.navigate(['/home'], {
+            state: {
+              usuarioNome: sessao.nome
+            }
+          });
         } else {
-          await this.exibirToast('Não foi possível iniciar a sessão.', 'danger');
+          await this.exibirToast(
+            'Não foi possível iniciar a sessão.',
+            'danger'
+          );
         }
       },
       error: async (err) => {

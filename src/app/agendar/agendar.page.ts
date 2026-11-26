@@ -225,7 +225,7 @@ export class AgendarPage implements OnInit {
     }
 
     const usuario = this.authService.getUsuarioLogado();
-    const idPaciente = usuario?.id;
+    const idPaciente = usuario?.idPaciente;
 
     if (!idPaciente) {
       await this.exibirToast('Sessão não identificada. Faça login novamente.', 'danger');
@@ -277,9 +277,5 @@ export class AgendarPage implements OnInit {
 
   voltarInicio() {
     this.router.navigate(['/home']);
-  }
-
-  irParaConsultas() {
-    this.router.navigate(['/consultas']);
   }
 }
